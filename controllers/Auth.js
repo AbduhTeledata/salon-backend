@@ -1,5 +1,6 @@
 import User from "../models/UserModel.js";
 import argon2 from "argon2";
+import Branches from "../models/BranchModel.js";
 
 export const Login = async (req, res) => {
     const user = await User.findOne({
@@ -27,7 +28,13 @@ export const Me = async(req, res) => {
         attributes: ['uuid', 'name', 'email', 'role', 'branchId'],
         where: {
             uuid: req.session.userId
-        }
+        },
+        include: [
+            {
+                model: Branches,
+                as: 'branch',
+                attributes: ['id', 'name', 'address', 'phone']
+            }],
     });
     if(!user) return res.status(404).json({msg: "User tidak ditemukan"});
     res.status(200).json(user);
