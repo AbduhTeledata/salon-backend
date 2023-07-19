@@ -1,11 +1,11 @@
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
 import Users from "./UserModel.js";
-import Members from "./MemberModel.js";
-import Employees from "./EmployeeModel.js";
+// import Members from "./MemberModel.js";
+// import Employees from "./EmployeeModel.js";
 import Branches from "./BranchModel.js";
-import Products from "./ProductModel.js";
-import Discounts from "./DiscountModel.js";
+// import Products from "./ProductModel.js";
+// import Discounts from "./DiscountModel.js";
 
 const {DataTypes} = Sequelize;
 
@@ -20,6 +20,13 @@ const Orders = db.define('x941orders', {
     },
     inv_code: {
         type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
+    },
+    productname: {
+        type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
             notEmpty: true
@@ -60,7 +67,7 @@ const Orders = db.define('x941orders', {
             notEmpty: false
         }
     },
-    kodemember: {
+    customer: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -95,12 +102,12 @@ const Orders = db.define('x941orders', {
 });
 
 
-Orders.belongsTo(Products, {
-    as: "product",
-    foreignKey: {
-      allowNull: false
-    }
-  });
+// Orders.belongsTo(Products, {
+//     as: "product",
+//     foreignKey: {
+//       allowNull: false
+//     }
+//   });
 Orders.belongsTo(Branches, {
     as: "branch",
     foreignKey: {

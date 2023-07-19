@@ -2,22 +2,23 @@ import Orders from '../models/OrderModel.js';
 import Employees from '../models/EmployeeModel.js';
 import Users from "../models/UserModel.js";
 import {Op} from "sequelize";
-import Members from '../models/MemberModel.js';
+// import Members from '../models/MemberModel.js';
 import Branches from '../models/BranchModel.js';
-import Products from '../models/ProductModel.js';
-import Discounts from '../models/DiscountModel.js';
+// import Products from '../models/ProductModel.js';
+// import Discounts from '../models/DiscountModel.js';
 
 export const getOrders = async (req, res) =>{
     try {
         let response;
         if(req.role === "Owner"){
             response = await Orders.findAll({
-                attributes:['uuid','inv_code', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'kodemember', 'iscard', 'note', 'terapis', 'createdAt'],
-                include:[{
-                    model: Products,
-                    as: 'product',
-                    attributes:['name', 'price']
-                },
+                attributes:['uuid', 'inv_code', 'productname', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'customer', 'iscard', 'note', 'terapis', 'createdAt'],
+                include:[
+                // {
+                //     model: Products,
+                //     as: 'product',
+                //     attributes:['name', 'price']
+                // },
      
                 {
                     model: Branches,
@@ -32,15 +33,16 @@ export const getOrders = async (req, res) =>{
             });
         }else{
             response = await Orders.findAll({
-                attributes:['uuid','inv_code', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'kodemember', 'iscard', 'note', 'terapis','createdAt'],
+                attributes:['uuid','inv_code', 'productname', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'customer', 'iscard', 'note', 'terapis','createdAt'],
                 where:{
                     userId: req.userId
                 },
-                include:[{
-                    model: Products,
-                    as: 'product',
-                    attributes:['name', 'price']
-                },
+                include:[
+                // {
+                //     model: Products,
+                //     as: 'product',
+                //     attributes:['name', 'price']
+                // },
                  
                 {
                     model: Branches,
@@ -71,15 +73,16 @@ export const getOrderById = async(req, res) =>{
         let response;
         if(req.role === "Owner"){
             response = await Orders.findOne({
-                attributes:['uuid','inv_code', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'kodemember', 'iscard', 'note', 'terapis','createdAt'],
+                attributes:['uuid','inv_code', 'productname', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'customer', 'iscard', 'note', 'terapis','createdAt'],
                 where:{
                     id: order.id
                 },
-                include:[{
-                    model: Products,
-                    as: 'product',
-                    attributes:['name', 'price']
-                },
+                include:[
+                // {
+                //     model: Products,
+                //     as: 'product',
+                //     attributes:['name', 'price']
+                // },
                
                 {
                     model: Branches,
@@ -94,15 +97,16 @@ export const getOrderById = async(req, res) =>{
             });
         }else{
             response = await Orders.findOne({
-                attributes:['uuid','inv_code', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'kodemember', 'iscard', 'terapis', 'note', 'createdAt'],
+                attributes:['uuid','inv_code', 'productname', 'qty', 'sub_total', 'total_disc', 'taxes', 'total_price',  'customer', 'iscard', 'terapis', 'note', 'createdAt'],
                 where:{
                     [Op.and]:[{id: order.id}, {userId: req.userId}]
                 },
-                include:[{
-                    model: Products,
-                    as: 'product',
-                    attributes:['name', 'price']
-                },
+                include:[
+                // {
+                //     model: Products,
+                //     as: 'product',
+                //     attributes:['name', 'price']
+                // },
                 
                 {
                     model: Branches,
@@ -123,20 +127,20 @@ export const getOrderById = async(req, res) =>{
 }
 
 export const createOrder = async(req, res) =>{
-    const {inv_code, qty, sub_total, total_disc, taxes, total_price, kodemember, iscard, note, terapis, productId, memberId, branchId} = req.body;
+    const {inv_code, productname, qty, sub_total, total_disc, taxes, total_price, customer, iscard, note, terapis, productId, memberId, branchId} = req.body;
     try {
         await Orders.create({
             inv_code: inv_code,
+            productname: productname,
             qty: qty,
             sub_total: sub_total,
             total_disc: total_disc,
             taxes: taxes,
             total_price: total_price,
-            kodemember: kodemember,
+            customer: customer,
             iscard: iscard,
             note: note,
             terapis: terapis,
-            productId: productId,
             branchId: branchId,
             userId: req.userId,
             
@@ -155,16 +159,16 @@ export const updateOrder = async(req, res) =>{
             }
         });
         if(!order) return res.status(404).json({msg: "Data tidak ditemukan"});
-        const {inv_code, qty, sub_total, total_disc, taxes, total_price, kodemember, iscard, note, terapis, productId, memberId, branchId} = req.body;
+        const {inv_code, productname, qty, sub_total, total_disc, taxes, total_price, customer, iscard, note, terapis, productId, memberId, branchId} = req.body;
         if(req.role === "Owner"){
-            await Orders.update({inv_code, qty, sub_total, total_disc, taxes, total_price, kodemember, iscard, note, terapis, productId, memberId, branchId},{
+            await Orders.update({inv_code, productname, qty, sub_total, total_disc, taxes, total_price, customer, iscard, note, terapis, productId, memberId, branchId},{
                 where:{
                     id: order.id
                 }
             });
         }else{
             if(req.userId !== order.userId) return res.status(403).json({msg: "Akses terlarang"});
-            await Orders.update({inv_code, qty, sub_total, total_disc, taxes, total_price, kodemember, iscard, note, terapis, productId, memberId, branchId},{
+            await Orders.update({inv_code, productname, qty, sub_total, total_disc, taxes, total_price, customer, iscard, note, terapis, productId, memberId, branchId},{
                 where:{
                     [Op.and]:[{id: order.id}, {userId: req.userId}]
                 }
@@ -184,7 +188,7 @@ export const deleteOrder = async(req, res) =>{
             }
         });
         if(!order) return res.status(404).json({msg: "Data tidak ditemukan"});
-        const {inv_code, qty, sub_total, total_disc, taxes, total_price, kodemember, iscard, note, terapis, productId,  branchId} = req.body;
+        const {inv_code, productname, qty, sub_total, total_disc, taxes, total_price, customer, iscard, note, terapis, productId,  branchId} = req.body;
         if(req.role === "Owner"){
             await Orders.destroy({
                 where:{
