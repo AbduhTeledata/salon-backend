@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 
-const db = new Sequelize('h941teledata_salon', 'root', '', {
-    host: "localhost",
+const db = new Sequelize('h941teledata_salon', 'root', 'abduh', {
+    host: "127.0.0.1",
     dialect: "mysql",
     pool: {
         max: 5,

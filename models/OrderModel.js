@@ -26,7 +26,7 @@ const Orders = db.define('x941orders', {
         }
     },
     productname: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
             notEmpty: true
