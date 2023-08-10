@@ -45,7 +45,7 @@ app.use(session({
 
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:5173' //dari hosting react js/frontend ke hosting express js/backend  
+    origin: 'http://localhost:8081' //dari hosting react js/frontend ke hosting express js/backend  
 }));
 
 app.use(express.json());
